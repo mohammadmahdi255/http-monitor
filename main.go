@@ -1,26 +1,32 @@
 package main
 
 import (
-	"fmt"
+	"github.com/labstack/echo/v4"
 	"github.com/mohammadmahdi255/http-monitor/database"
-	"github.com/mohammadmahdi255/http-monitor/database/tables"
+	"github.com/mohammadmahdi255/http-monitor/handler"
+	"github.com/mohammadmahdi255/http-monitor/monitor"
+	"log"
+	"time"
 )
 
 func main() {
 	db := database.New("http-monitor.db")
 
-	db.Create(&tables.User{Username: "mahdi", Password: "lae@110"})
+	h := handler.New(db)
 
-	var p tables.User
-	db.First(&p, "Username = ?", "mahdi")
+	mnt := monitor.NewMonitor(h, nil, 10)
+	sch, _ := monitor.NewScheduler(mnt)
+	sch.DoWithIntervals(time.Second * 5)
 
-	fmt.Println(p)
-	//h := handler.NewHandler(db)
+	err := mnt.LoadFromDatabase()
+	if err != nil {
+		log.Println(err)
+	}
 
 	// init echo
-	//e := echo.New()
-	//g := e.Group("/api")
-	//h.RegisterRoutes(g)
-	//
-	//e.Logger.Fatal(e.Start("127.0.0.1:5000"))
+	e := echo.New()
+	rg := e.Group("/api")
+	h.RegisterRoutes(rg)
+
+	e.Logger.Fatal(e.Start("127.0.0.1:5000"))
 }

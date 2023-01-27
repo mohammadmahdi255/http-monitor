@@ -37,9 +37,10 @@ type RequestError struct {
 	Status int
 }
 
-// MakeRequestError NewBindingError creates an error with given data. "bindingType" is the type that is being bound
+// NewRequestError creates an error with given data. "bindingType" is the type that is being bound
 // provide short description for "detail" to display to user as error message
-func MakeRequestError(detail string, err error, statusCode int) *RequestError {
+func NewRequestError(detail string, err error, statusCode int) *RequestError {
+
 	if e, ok := err.(*RequestError); ok {
 		return e
 	}

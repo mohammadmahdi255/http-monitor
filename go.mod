@@ -6,6 +6,7 @@ require github.com/labstack/echo/v4 v4.10.0
 
 require (
 	github.com/asaskevich/govalidator v0.0.0-20210307081110-f21760c49a8d // indirect
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/gammazero/deque v0.2.0 // indirect
 	github.com/gammazero/workerpool v1.1.3 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect

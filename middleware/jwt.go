@@ -1,9 +1,9 @@
-// Package middleware codes from https://github.com/labstack/echo/blob/master/middleware/jwt.go
-package middleware
+// Package jwt Package middleware codes from https://github.com/labstack/echo/blob/master/middleware/jwt.go
+package mileware
 
 import (
+	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
 )
 
 type RequestInfo struct {
@@ -32,9 +32,9 @@ func skipper(c echo.Context) bool {
 	return false
 }
 
-func JWT(key interface{}) echo.MiddlewareFunc {
-	c := middleware.DefaultJWTConfig
+func Config(key interface{}) echojwt.Config {
+	c := echojwt.Config{}
 	c.SigningKey = key
 	c.Skipper = skipper
-	return middleware.JWTWithConfig(c)
+	return c
 }

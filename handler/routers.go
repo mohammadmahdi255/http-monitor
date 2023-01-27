@@ -5,35 +5,32 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/mohammadmahdi255/http-monitor/common"
-	Middleware "github.com/mohammadmahdi255/http-monitor/middleware"
+	"github.com/mohammadmahdi255/http-monitor/middleware"
 )
 
 // RegisterRoutes registers routes with their corresponding handler function
 // functions are defined in handler package
-func (h *Handler) RegisterRoutes(routerGroup *echo.Group) {
+func (h *Handler) RegisterRoutes(rg *echo.Group) {
 
-	routerGroup.Use(middleware.RemoveTrailingSlash())
-
-	routerGroup.Use(middleware.Logger())
-	routerGroup.Use(middleware.Recover())
-
-	routerGroup.Use(echojwt.WithConfig(echojwt.Config{
-		SigningKey: common.JWTSecret,
-	}))
+	rg.Use(middleware.Logger())
+	rg.Use(middleware.Recover())
 
 	// adding white list
-	Middleware.AddToWhiteList("/api/users", "POST")
-	Middleware.AddToWhiteList("/api/users/login", "POST")
+	mileware.AddToWhiteList("/api/users", "POST")
+	mileware.AddToWhiteList("/api/users/login", "POST")
 
-	userGroup := routerGroup.Group("/users")
+	rg.Use(echojwt.WithConfig(mileware.Config(common.JWTSecret)))
+
+	userGroup := rg.Group("/users")
 	userGroup.POST("", h.SignUp)
 	userGroup.POST("/login", h.Login)
 
-	urlGroup := routerGroup.Group("/urls")
-	urlGroup.GET("", h.FetchURLs)
+	alertGroup := rg.Group("/alerts")
+	alertGroup.GET("", h.FetchAlerts)
+
+	urlGroup := rg.Group("/urls")
 	urlGroup.POST("", h.CreateURL)
+	urlGroup.GET("", h.FetchURLs)
 	urlGroup.GET("/:urlID", h.GetURLStats)
 
-	alertGroup := routerGroup.Group("/alerts")
-	alertGroup.GET("", h.FetchAlerts)
 }
